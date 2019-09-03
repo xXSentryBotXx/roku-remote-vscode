@@ -1,8 +1,12 @@
 const vscode = require('vscode');
-const window = vscode.window;
+const http = require('http');
 
 const { KEYS } = require('./src/constants');
+
 const IP = '0.0.0.0';
+const PORT = 8060;
+
+const window = vscode.window;
 
 const res = `<!DOCTYPE html>
 <html lang="en">
@@ -21,6 +25,7 @@ const res = `<!DOCTYPE html>
     <button onclick="OKKey()">OK</button>
 	<script>
 		const vscode = acquireVsCodeApi();
+
 		function upKey () {
 			vscode.postMessage('${KEYS.UP}');
 		}
@@ -50,14 +55,9 @@ const res = `<!DOCTYPE html>
 		}
 
 		document.addEventListener('keydown', onKeyDown);
-
     </script>
   </body>
 </html>`;
-
-/**
- * @param {vscode.ExtensionContext} context
- */
 
 function activate(context) {
 	console.log('Extension activated');
@@ -73,6 +73,7 @@ function activate(context) {
 				enableScripts: true
 			}
 		);
+		
 		panel.webview.html = res;
 
 		panel.webview.onDidReceiveMessage(
@@ -80,21 +81,27 @@ function activate(context) {
 				switch (message) {
 					case KEYS.UP:
 						console.log(KEYS.UP);
+						http.get(`http://${IP}:${PORT}/press/Up`);
 						break;
 					case KEYS.LEFT:
 						console.log(KEYS.LEFT);
+						http.get(`http://${IP}:${PORT}/press/Left`);
 						break;
 					case KEYS.DOWN:
 						console.log(KEYS.DOWN);
+						http.get(`http://${IP}:${PORT}/press/Down`);
 						break;
 					case KEYS.RIGHT:
 						console.log(KEYS.RIGHT);
+						http.get(`http://${IP}:${PORT}/press/Right`);
 						break;
 					case KEYS.OK:
 						console.log(KEYS.OK);
+						http.get(`http://${IP}:${PORT}/press/Select`);
 						break;
 					case KEYS.BACK:
 						console.log(KEYS.BACK);
+						http.get(`http://${IP}:${PORT}/press/Back`);
 						break;
 				}
 			},
