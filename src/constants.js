@@ -4,7 +4,8 @@ const KEYS = {
     DOWN: 'ArrowDown',
     RIGHT: 'ArrowRight',
     OK: 'Enter',
-    BACK: 'Backspace'
+    BACK: 'Backspace',
+    HOME: 'Escape'
 };
 
 module.exports = {
