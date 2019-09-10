@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roku Remote</title>
+  </head>
+  <body>
+    <table id="remote-buttons">
+      <tr>
+        <td colspan="2">
+          <button id="${UP}">Back</button>
+        </td>
+        <td colspan="2">
+          <button id="${LEFT}">Home</button>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <button id="${DOWN}">Up</button>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>
+          <button id="${RIGHT}">Left</button>
+        </td>
+        <td>
+          <button id="${BACK}">OK</button>
+        </td>
+        <td>
+          <button id="${OK}">Right</button>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <button id="${HOME}">Down</button>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+	  <script>
+      const vscode = acquireVsCodeApi();
+      const remoteButtons = document.getElementById('remote-buttons');
+
+      function onClick (e) {
+        vscode.postMessage(e.target.id);
+      }
+
+      function onKeyDown (e) {
+        vscode.postMessage(e.code);
+      }
+
+      remoteButtons.addEventListener('click', onClick);
+      document.addEventListener('keydown', onKeyDown);
+    </script>
+  </body>
+</html>
