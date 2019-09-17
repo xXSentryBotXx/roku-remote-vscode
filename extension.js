@@ -29,17 +29,18 @@ function activate(context) {
 			{
 				enableScripts: true
 			}
-    );
+    	);
 
 		panel.webview.html = interpolate(fs.readFileSync(file.fsPath, 'utf8'), KEYS);
 
 		panel.webview.onDidReceiveMessage(
 			message => {
-        const action = ACTIONS[message];
-        if (action) {
-          console.log(action);
-          request.post(`http://${IP}:${PORT}/keypress/${action}`);
-        }
+				console.log(message);
+				const action = ACTIONS[message];
+				if (action) {
+					console.log(action);
+					request.post(`http://${IP}:${PORT}/keypress/${action}`);
+				}
 			},
 			undefined,
 			context.subscriptions

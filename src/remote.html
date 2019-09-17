@@ -3,57 +3,116 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      #remote-buttons button {
+        width: 100%;
+      }
+
+      #remote-buttons td {
+        margin: 30px 15px;
+      }
+    </style>
     <title>Roku Remote</title>
   </head>
   <body>
     <table id="remote-buttons">
       <tr>
-        <td colspan="2">
-          <button id="${UP}">Back</button>
+        <td>
+          <button id="${BACK}">Back</button>
         </td>
-        <td colspan="2">
-          <button id="${LEFT}">Home</button>
+        <td></td>
+        <td>
+          <button id="${HOME}">Home</button>
         </td>
       </tr>
       <tr>
         <td></td>
         <td>
-          <button id="${DOWN}">Up</button>
+          <button id="${UP}">Up</button>
         </td>
         <td></td>
       </tr>
       <tr>
         <td>
-          <button id="${RIGHT}">Left</button>
+          <button id="${LEFT}">Left</button>
         </td>
         <td>
-          <button id="${BACK}">OK</button>
+          <button id="${OK}">OK</button>
         </td>
         <td>
-          <button id="${OK}">Right</button>
+          <button id="${RIGHT}">Right</button>
         </td>
       </tr>
       <tr>
         <td></td>
         <td>
-          <button id="${HOME}">Down</button>
+          <button id="${DOWN}">Down</button>
         </td>
         <td></td>
       </tr>
+      <tr>
+        <td>
+          <button id="${INSTANT_REPLAY}">Replay</button>
+        </td>
+        <td></td>
+        <td>
+          <button id="${INFO}">Info</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button id="${REV}">REV</button>
+        </td>
+        <td>
+          <button id="${PLAY}">Play</button>
+        </td>
+        <td>
+          <button id="${FWD}">FWD</button>
+        </td>
+      </tr>
+      <tr>
+          <td colspan="2">
+            <input id="send-text-input" type="text"/>
+          </td>
+          <td>
+            <button id="send-text-button">Send</button>
+          </td>
+        </tr>
     </table>
 	  <script>
       const vscode = acquireVsCodeApi();
       const remoteButtons = document.getElementById('remote-buttons');
+      const sendTextInput = document.getElementById('send-text-input');
+      const sendTextButton = document.getElementById('send-text-button');
 
       function onClick (e) {
         vscode.postMessage(e.target.id);
       }
 
       function onKeyDown (e) {
+        e.stopPropagation();
         vscode.postMessage(e.code);
       }
 
+      function onSendTextButtonClick (e) {
+        e.stopPropagation();
+        if (sendTextInput.value !== '') {
+          vscode.postMessage(sendTextInput.value);
+          sendTextInput.value = '';
+        }
+      }
+
+      function onSendTextKeyDown (e) {
+        e.stopPropagation();
+        if (e.code === '${OK}') {
+          vscode.postMessage(e.target.value);
+          e.target.value = '';
+        }
+      }
+
       remoteButtons.addEventListener('click', onClick);
+      sendTextInput.addEventListener('keydown', onSendTextKeyDown)
+      sendTextButton.addEventListener('click', onSendTextButtonClick)
       document.addEventListener('keydown', onKeyDown);
     </script>
   </body>

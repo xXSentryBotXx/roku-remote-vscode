@@ -5,7 +5,12 @@ const KEYS = {
   RIGHT: 'ArrowRight',
   OK: 'Enter',
   BACK: 'Backspace',
-  HOME: 'Escape'
+  HOME: 'Escape',
+  REV: 'BracketLeft',
+  PLAY: 'Backslash',
+  FWD: 'BracketRight',
+  INFO: 'Equal',
+  INSTANT_REPLAY: 'Minus'
 };
 
 const ACTIONS = {
@@ -15,7 +20,12 @@ const ACTIONS = {
   [KEYS.RIGHT]: 'Right',
   [KEYS.OK]: 'Select',
   [KEYS.BACK]: 'Back',
-  [KEYS.HOME]: 'Home'
+  [KEYS.HOME]: 'Home',
+  [KEYS.REV]: 'Rev',
+  [KEYS.PLAY]: 'Play',
+  [KEYS.FWD]: 'Fwd',
+  [KEYS.INFO]: 'Info',
+  [KEYS.INSTANT_REPLAY]: 'InstantReplay'
 };
 
 module.exports = {
