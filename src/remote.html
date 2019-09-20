@@ -11,6 +11,10 @@
       #remote-buttons td {
         margin: 30px 15px;
       }
+
+      .address-form {
+        margin: 20px 10px;
+      }
     </style>
     <title>Roku Remote</title>
   </head>
@@ -79,25 +83,32 @@
           </td>
         </tr>
     </table>
+    <div class="address-form">
+      <label for="ip">IP Address:</label>
+      <input type="text" name="ip" id="ip">
+      <button id="set-address-button">OK</button>
+    </div>
 	  <script>
       const vscode = acquireVsCodeApi();
       const remoteButtons = document.getElementById('remote-buttons');
       const sendTextInput = document.getElementById('send-text-input');
       const sendTextButton = document.getElementById('send-text-button');
+      const ipAddressText = document.getElementById('ip');
+      const setIpAddressButton = document.getElementById('set-address-button');
 
       function onClick (e) {
-        vscode.postMessage(e.target.id);
+        vscode.postMessage({action: 'REMOTE_ACTION', payload: e.target.id});
       }
 
       function onKeyDown (e) {
         e.stopPropagation();
-        vscode.postMessage(e.code);
+        vscode.postMessage({action: 'REMOTE_ACTION', payload: e.code});
       }
 
       function onSendTextButtonClick (e) {
         e.stopPropagation();
         if (sendTextInput.value !== '') {
-          vscode.postMessage(sendTextInput.value);
+          vscode.postMessage({action: 'SEND_TEXT', payload: sendTextInput.value});
           sendTextInput.value = '';
         }
       }
@@ -105,14 +116,29 @@
       function onSendTextKeyDown (e) {
         e.stopPropagation();
         if (e.code === '${OK}') {
-          vscode.postMessage(e.target.value);
+          vscode.postMessage({action: 'SEND_TEXT', payload: e.target.value});
+          e.target.value = '';
+        }
+      }
+
+      function onSetIpAdrressButtonClick (e) {
+        vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: ipAddressText.value });
+        ipAddressText.value = '';
+      }
+
+      function onIpAddressTextKeyDown (e) {
+        e.stopPropagation();
+        if (e.code === '${OK}') {
+          vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: e.target.value});
           e.target.value = '';
         }
       }
 
       remoteButtons.addEventListener('click', onClick);
-      sendTextInput.addEventListener('keydown', onSendTextKeyDown)
-      sendTextButton.addEventListener('click', onSendTextButtonClick)
+      sendTextInput.addEventListener('keydown', onSendTextKeyDown);
+      sendTextButton.addEventListener('click', onSendTextButtonClick);
+      setIpAddressButton.addEventListener('click', onSetIpAdrressButtonClick);
+      ipAddressText.addEventListener('keydown', onIpAddressTextKeyDown);
       document.addEventListener('keydown', onKeyDown);
     </script>
   </body>

@@ -3,15 +3,16 @@ const request = require('request');
 const path = require('path');
 const fs = require('fs');
 
-const { KEYS, ACTIONS } = require('./src/constants');
+const { KEYS, REMOTE_ACTIONS, EXT_ACTIONS } = require('./src/constants');
 const { interpolate } = require('./src/utils');
-const IP = '0.0.0.0';
 const PORT = 8060;
 
 const window = vscode.window;
 
+let ipAddress = '0.0.0.0';
+
 function activate(context) {
-  console.log('Extension activated');
+  	console.log('Extension activated');
   
 	const onDiskPath = vscode.Uri.file(
         path.join(context.extensionPath, 'src', 'remote.html')
@@ -36,10 +37,19 @@ function activate(context) {
 		panel.webview.onDidReceiveMessage(
 			message => {
 				console.log(message);
-				const action = ACTIONS[message];
-				if (action) {
-					console.log(action);
-					request.post(`http://${IP}:${PORT}/keypress/${action}`);
+				switch (message.action) {
+					case EXT_ACTIONS.REMOTE_ACTION:
+						const remoteAction = REMOTE_ACTIONS[message.payload];
+						if (remoteAction) {
+							request.post(`http://${ipAddress}:${PORT}/keypress/${remoteAction}`);
+						}
+						break;
+					case EXT_ACTIONS.SET_IP_ADDRESS:
+						ipAddress = message.payload;
+						break;
+					case EXT_ACTIONS.SEND_TEXT:
+						sendTextToRoku(message.payload);
+						break;
 				}
 			},
 			undefined,
@@ -59,6 +69,15 @@ function activate(context) {
 
 function deactivate() {
   console.log('Extension disactivated');
+}
+
+function sendTextToRoku(text) {
+	const MS_INTERVAL = 400;
+	Array.prototype.forEach.call(text, (l, idx) => {
+		setTimeout(() => {
+			request.post(`http://${ipAddress}:${PORT}/keypress/LIT_${l}`);
+		}, MS_INTERVAL * idx);
+	});
 }
 
 module.exports = {

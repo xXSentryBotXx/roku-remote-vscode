@@ -13,7 +13,7 @@ const KEYS = {
   INSTANT_REPLAY: 'Minus'
 };
 
-const ACTIONS = {
+const REMOTE_ACTIONS = {
   [KEYS.UP]: 'Up',
   [KEYS.LEFT]: 'Left',
   [KEYS.DOWN]: 'Down',
@@ -28,7 +28,14 @@ const ACTIONS = {
   [KEYS.INSTANT_REPLAY]: 'InstantReplay'
 };
 
+const EXT_ACTIONS = {
+  REMOTE_ACTION: 'REMOTE_ACTION',
+  SEND_TEXT: 'SEND_TEXT',
+  SET_IP_ADDRESS: 'SET_IP_ADDRESS'
+}
+
 module.exports = {
   KEYS,
-  ACTIONS
+  REMOTE_ACTIONS,
+  EXT_ACTIONS
 };
