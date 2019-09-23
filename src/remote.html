@@ -3,7 +3,26 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <style>
+      body {
+        background: var(--vscode-editor-background);
+        color: var(--vscode-editor-foreground)
+      }
+
+      button {
+        color: var(--vscode-button-foreground);
+        background: var(--vscode-button-background);
+        text-decoration: none;
+        text-align: center;
+        border: none;
+        outline: none;
+      }
+
+      button:hover {
+        background: var(--vscode-button-hoverBackground);
+      }
+
       #remote-buttons button {
         width: 100%;
       }
@@ -12,51 +31,83 @@
         margin: 30px 15px;
       }
 
-      .address-form {
-        margin: 20px 10px;
+      .modal {
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        background-color: #00000080;
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow: auto;
+      }
+
+      .modal .modal-content {
+        margin: 30px;
+        padding: 30px;
+        background: var(--vscode-editor-background);
+        width: 75%;
+        height: auto;
+      }
+
+      .modal .modal-content .close-button {
+        position: absolute;
+        margin: 30px;
+        right: 5px;
+        top: 5px;
       }
     </style>
     <title>Roku Remote</title>
   </head>
   <body>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="address-form">
+          <button id="close-button" class="close-button"><i class="fa fa-times"></i></button>
+          <label for="ip">IP Address:</label>
+          <input type="text" name="ip" id="ip">
+          <button id="set-address-button">OK</button>
+        </div>
+      </div>
+    </div>
     <table id="remote-buttons">
       <tr>
         <td>
-          <button id="${BACK}">Back</button>
+          <button id="${BACK}"><i class="fa fa-arrow-left"></i></button>
         </td>
         <td></td>
         <td>
-          <button id="${HOME}">Home</button>
+          <button id="${HOME}"><i class="fa fa-home"></i></button>
         </td>
       </tr>
       <tr>
         <td></td>
         <td>
-          <button id="${UP}">Up</button>
+          <button id="${UP}"><i class="fa fa-angle-up"></i></button>
         </td>
         <td></td>
       </tr>
       <tr>
         <td>
-          <button id="${LEFT}">Left</button>
+          <button id="${LEFT}"><i class="fa fa-angle-left"></i></button>
         </td>
         <td>
           <button id="${OK}">OK</button>
         </td>
         <td>
-          <button id="${RIGHT}">Right</button>
+          <button id="${RIGHT}"><i class="fa fa-angle-right"></i></button>
         </td>
       </tr>
       <tr>
         <td></td>
         <td>
-          <button id="${DOWN}">Down</button>
+          <button id="${DOWN}"><i class="fa fa-angle-down"></i></button>
         </td>
         <td></td>
       </tr>
       <tr>
         <td>
-          <button id="${INSTANT_REPLAY}">Replay</button>
+          <button id="${INSTANT_REPLAY}"><i class="fa fa-repeat"></i></button>
         </td>
         <td></td>
         <td>
@@ -65,13 +116,13 @@
       </tr>
       <tr>
         <td>
-          <button id="${REV}">REV</button>
+          <button id="${REV}"><i class="fa fa-fast-backward"></i></button>
         </td>
         <td>
-          <button id="${PLAY}">Play</button>
+          <button id="${PLAY}"><i class="fa fa-play"></i></button>
         </td>
         <td>
-          <button id="${FWD}">FWD</button>
+          <button id="${FWD}"><i class="fa fa-fast-forward"></i></button>
         </td>
       </tr>
       <tr>
@@ -79,15 +130,10 @@
             <input id="send-text-input" type="text"/>
           </td>
           <td>
-            <button id="send-text-button">Send</button>
+            <button id="send-text-button"><i class="fa fa-chevron-right"></i></button>
           </td>
         </tr>
     </table>
-    <div class="address-form">
-      <label for="ip">IP Address:</label>
-      <input type="text" name="ip" id="ip">
-      <button id="set-address-button">OK</button>
-    </div>
 	  <script>
       const vscode = acquireVsCodeApi();
       const remoteButtons = document.getElementById('remote-buttons');
@@ -95,6 +141,8 @@
       const sendTextButton = document.getElementById('send-text-button');
       const ipAddressText = document.getElementById('ip');
       const setIpAddressButton = document.getElementById('set-address-button');
+      const closeButton = document.getElementById('close-button');
+      const modal = document.getElementById('modal');
 
       function onClick (e) {
         vscode.postMessage({action: 'REMOTE_ACTION', payload: e.target.id});
@@ -134,11 +182,18 @@
         }
       }
 
+      function closeModal() {
+        modal.style.display = 'none';
+      }
+
+      console.log(closeButton)
+
       remoteButtons.addEventListener('click', onClick);
       sendTextInput.addEventListener('keydown', onSendTextKeyDown);
       sendTextButton.addEventListener('click', onSendTextButtonClick);
       setIpAddressButton.addEventListener('click', onSetIpAdrressButtonClick);
       ipAddressText.addEventListener('keydown', onIpAddressTextKeyDown);
+      closeButton.addEventListener('click', closeModal);
       document.addEventListener('keydown', onKeyDown);
     </script>
   </body>
