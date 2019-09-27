@@ -23,6 +23,10 @@
         background: var(--vscode-button-hoverBackground);
       }
 
+      #connected-device {
+        cursor: pointer;
+      }
+
       #remote-buttons button {
         width: 100%;
         border-radius: 24px;
@@ -71,6 +75,7 @@
         </div>
       </div>
     </div>
+    <p>Device: <a id="connected-device">none</a></p>
     <table id="remote-buttons">
       <tr>
         <td>
@@ -137,6 +142,7 @@
     </table>
 	  <script>
       const vscode = acquireVsCodeApi();
+      const deviceLabel = document.getElementById('connected-device');
       const remoteButtons = document.getElementById('remote-buttons');
       const sendTextInput = document.getElementById('send-text-input');
       const sendTextButton = document.getElementById('send-text-button');
@@ -144,6 +150,15 @@
       const setIpAddressButton = document.getElementById('set-address-button');
       const closeButton = document.getElementById('close-button');
       const modal = document.getElementById('modal');
+
+      function validateIpAddress(address) {
+        const terms = address.split('.');
+        if (terms.length !== 4) {
+          return false;
+        }
+
+        return terms.filter(term => Number(term) >= 0 && Number(term) <= 255).length === 4;
+      }
 
       function onClick (e) {
         vscode.postMessage({action: 'REMOTE_ACTION', payload: e.target.id});
@@ -171,15 +186,21 @@
       }
 
       function onSetIpAdrressButtonClick (e) {
-        vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: ipAddressText.value });
-        ipAddressText.value = '';
+        if (validateIpAddress(ipAddressText.value)) {
+          vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: ipAddressText.value });
+          deviceLabel.innerText = ipAddressText.value || 'none';
+          ipAddressText.value = '';
+          closeModal();
+        }
       }
 
       function onIpAddressTextKeyDown (e) {
         e.stopPropagation();
-        if (e.code === '${OK}') {
+        if (e.code === '${OK}' && validateIpAddress(e.target.value)) {
           vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: e.target.value});
+          deviceLabel.innerText = e.target.value || 'none'; 
           e.target.value = '';
+          closeModal();
         }
       }
 
@@ -187,8 +208,15 @@
         modal.style.display = 'none';
       }
 
+      function openModal() {
+        modal.style.display = 'block';
+      }
+
+
+
       console.log(closeButton)
 
+      deviceLabel.addEventListener('click', openModal)
       remoteButtons.addEventListener('click', onClick);
       sendTextInput.addEventListener('keydown', onSendTextKeyDown);
       sendTextButton.addEventListener('click', onSendTextButtonClick);
