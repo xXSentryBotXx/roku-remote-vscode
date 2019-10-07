@@ -64,7 +64,6 @@
       const closeButton = document.getElementById('close-button');
       const modal = document.getElementById('modal');
       const invalidFormatLabel = document.getElementById('invalid-message');
-      console.log(invalidFormatLabel.toString());
 
       function validateIpAddress(address) {
         const terms = address.split('.');
@@ -76,7 +75,6 @@
       }
 
       function onClick (payload) {
-        console.log(payload);
         vscode.postMessage({action: 'REMOTE_ACTION', payload: payload});
       }
 
@@ -102,14 +100,12 @@
       }
 
       function onSetIpAdrressButtonClick (e) {
-        console.log("set ip click")
         if (validateIpAddress(ipAddressText.value)) {
           vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: ipAddressText.value });
           deviceLabel.innerText = ipAddressText.value || 'none';
           ipAddressText.value = '';
           closeModal();
         } else {
-          console.log("Visible message")
           invalidFormatLabel.style.visibility = 'visible';
         }
       }
