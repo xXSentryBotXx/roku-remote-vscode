@@ -12,13 +12,18 @@ const window = vscode.window;
 let ipAddress = '0.0.0.0';
 
 function activate(context) {
-  	console.log('Extension activated');
+	console.log('Extension activated');
   
-	const onDiskPath = vscode.Uri.file(
-        path.join(context.extensionPath, 'src', 'remote.html')
-    );
+	const htmlOnDiskPath = vscode.Uri.file(
+    path.join(context.extensionPath, 'src', 'remote.html')
+	);
+	
+	const cssOnDiskPath = vscode.Uri.file(
+    path.join(context.extensionPath, 'src', 'style.css')
+  );
 
-  const file = onDiskPath.with({ scheme: 'vscode-resource' });
+	const htmlFile = htmlOnDiskPath.with({ scheme: 'vscode-resource' });
+	const cssFile = cssOnDiskPath.with({ scheme: 'vscode-resource' });
 
 	const commandId = 'extension.roku-remote';
 	let disposable = vscode.commands.registerCommand(commandId, function () {
@@ -30,9 +35,10 @@ function activate(context) {
 			{
 				enableScripts: true
 			}
-    	);
-
-		panel.webview.html = interpolate(fs.readFileSync(file.fsPath, 'utf8'), KEYS);
+    );
+		
+		const cssText = fs.readFileSync(cssFile.fsPath, 'utf8');
+		panel.webview.html = interpolate(fs.readFileSync(htmlFile.fsPath, 'utf8'), { ...KEYS, style: cssText });
 
 		panel.webview.onDidReceiveMessage(
 			message => {
@@ -58,7 +64,7 @@ function activate(context) {
 
 		panel.onDidDispose(
 			() => {
-			console.log('disposed');
+				console.log('disposed');
 			},
 			null,
 			context.subscriptions

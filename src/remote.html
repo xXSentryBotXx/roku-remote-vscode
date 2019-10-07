@@ -4,142 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <style>
-      body {
-        background: var(--vscode-editor-background);
-        color: var(--vscode-editor-foreground)
-      }
-
-      button {
-        color: var(--vscode-button-foreground);
-        background: var(--vscode-button-background);
-        text-decoration: none;
-        text-align: center;
-        border: none;
-        outline: none;
-      }
-
-      button:hover {
-        background: var(--vscode-button-hoverBackground);
-      }
-
-      #connected-device {
-        cursor: pointer;
-      }
-
-      #remote-buttons button {
-        width: 100%;
-        border-radius: 24px;
-      }
-
-      #remote-buttons td {
-        margin: 30px 15px;
-      }
-
-      .modal {
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        background-color: #00000080;
-        position: fixed;
-        left: 0;
-        top: 0;
-        overflow: auto;
-      }
-
-      .modal .modal-content {
-        margin: 30px;
-        padding: 30px;
-        background: var(--vscode-editor-background);
-        width: 75%;
-        height: auto;
-      }
-
-      .modal .modal-content .close-button {
-        position: absolute;
-        margin: 30px;
-        right: 5px;
-        top: 5px;
-      }
-    </style>
+    <link rel="stylesheet" href="./style.css">
+    <style> ${style} </style> <!-- Style is populated by node fileRead-->
     <title>Roku Remote</title>
   </head>
   <body>
     <div id="modal" class="modal">
       <div class="modal-content">
+        <button id="close-button" class="close-button"><i class="fa fa-times"></i></button>
         <div class="address-form">
-          <button id="close-button" class="close-button"><i class="fa fa-times"></i></button>
-          <label for="ip">IP Address:</label>
-          <input type="text" name="ip" id="ip">
-          <button id="set-address-button">OK</button>
+          <label class="ip-label" for="ip">IP Address:</label>
+          <input class="ip" type="text" name="ip" id="ip">
+          <button id="set-address-button" class="set-address-button"><i class="fa fa-chevron-right"></i></button>
+          <div id="invalid-message" class="invalid-message">Invalid IP Format</div>
         </div>
       </div>
     </div>
-    <p>Device: <a id="connected-device">none</a></p>
-    <table id="remote-buttons">
-      <tr>
-        <td>
-          <button class="remote-button" id="${BACK}"><i class="fa fa-arrow-left"></i></button>
-        </td>
-        <td></td>
-        <td>
-          <button id="${HOME}"><i class="fa fa-home"></i></button>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>
-          <button id="${UP}"><i class="fa fa-angle-up"></i></button>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>
-          <button id="${LEFT}"><i class="fa fa-angle-left"></i></button>
-        </td>
-        <td>
-          <button id="${OK}">OK</button>
-        </td>
-        <td>
-          <button id="${RIGHT}"><i class="fa fa-angle-right"></i></button>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>
-          <button id="${DOWN}"><i class="fa fa-angle-down"></i></button>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>
-          <button id="${INSTANT_REPLAY}"><i class="fa fa-repeat"></i></button>
-        </td>
-        <td></td>
-        <td>
-          <button id="${INFO}">Info</button>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <button id="${REV}"><i class="fa fa-fast-backward"></i></button>
-        </td>
-        <td>
-          <button id="${PLAY}"><i class="fa fa-play"></i></button>
-        </td>
-        <td>
-          <button id="${FWD}"><i class="fa fa-fast-forward"></i></button>
-        </td>
-      </tr>
-      <tr>
-          <td colspan="2">
-            <input id="send-text-input" type="text"/>
-          </td>
-          <td>
-            <button id="send-text-button"><i class="fa fa-chevron-right"></i></button>
-          </td>
-        </tr>
-    </table>
+    <div class="remote" id="remote-buttons">
+      <div class="device-row">
+        <p>Device: <a id="connected-device">none</a></p>
+      </div>
+      <div class="buttons-row">
+        <button class="remote-button big" onclick="onClick('${BACK}')"><i class="fa fa-arrow-left"></i></button>
+        <button class="remote-button big" onclick="onClick('${HOME}')"><i class="fa fa-home"></i></button>
+      </div>
+      <div class="buttons-row">
+        <button class="remote-button center" onclick="onClick('${UP}')"><i class="fa fa-chevron-up"></i></button>
+      </div>
+      <div class="buttons-row">
+        <button class="remote-button" onclick="onClick('${LEFT}')"><i class="fa fa-chevron-left"></i></button>
+        <button class="remote-button" onclick="onClick('${OK}')">OK</button>
+        <button class="remote-button" onclick="onClick('${RIGHT}')"><i class="fa fa-chevron-right"></i></button>
+      </div>
+      <div class="buttons-row">
+        <button class="remote-button center" onclick="onClick('${DOWN}')"><i class="fa fa-chevron-down"></i></button>
+      </div>
+      <div class="buttons-row">
+        <button class="remote-button big" onclick="onClick('${INSTANT_REPLAY}')"><i class="fa fa-repeat"></i></button>
+        <button class="remote-button big" onclick="onClick('${INFO}')"><i class="fa fa-asterisk"></i></button>
+      </div>
+      <div class="buttons-row">
+        <button class="remote-button" onclick="onClick('${REV}')"><i class="fa fa-fast-backward"></i></button>
+        <button class="remote-button" onclick="onClick('${PLAY}')"><i class="fa fa-play"></i><i class="fa fa-pause"></i></button>
+        <button class="remote-button" onclick="onClick('${FWD}')"><i class="fa fa-fast-forward"></i></button>
+      </div>
+      <div class="keyboard-input">
+        <input class="key-input" id="send-text-input" type="text" placeholder="Keyboard input..."/>
+        <button class="send-text-button" id="send-text-button"><i class="fa fa-chevron-right"></i></button>
+      </div>
+    </div>
 	  <script>
       const vscode = acquireVsCodeApi();
       const deviceLabel = document.getElementById('connected-device');
@@ -150,6 +63,8 @@
       const setIpAddressButton = document.getElementById('set-address-button');
       const closeButton = document.getElementById('close-button');
       const modal = document.getElementById('modal');
+      const invalidFormatLabel = document.getElementById('invalid-message');
+      console.log(invalidFormatLabel.toString());
 
       function validateIpAddress(address) {
         const terms = address.split('.');
@@ -160,8 +75,9 @@
         return terms.filter(term => Number(term) >= 0 && Number(term) <= 255).length === 4;
       }
 
-      function onClick (e) {
-        vscode.postMessage({action: 'REMOTE_ACTION', payload: e.target.id});
+      function onClick (payload) {
+        console.log(payload);
+        vscode.postMessage({action: 'REMOTE_ACTION', payload: payload});
       }
 
       function onKeyDown (e) {
@@ -186,11 +102,15 @@
       }
 
       function onSetIpAdrressButtonClick (e) {
+        console.log("set ip click")
         if (validateIpAddress(ipAddressText.value)) {
           vscode.postMessage({ action: 'SET_IP_ADDRESS', payload: ipAddressText.value });
           deviceLabel.innerText = ipAddressText.value || 'none';
           ipAddressText.value = '';
           closeModal();
+        } else {
+          console.log("Visible message")
+          invalidFormatLabel.style.visibility = 'visible';
         }
       }
 
@@ -201,23 +121,22 @@
           deviceLabel.innerText = e.target.value || 'none'; 
           e.target.value = '';
           closeModal();
+        } else if (e.code === '${OK}') {
+          invalidFormatLabel.style.visibility = 'visible';
         }
       }
 
       function closeModal() {
         modal.style.display = 'none';
+        ipAddressText.value = '';
       }
 
       function openModal() {
+        invalidFormatLabel.style.visibility = 'hidden';
         modal.style.display = 'block';
       }
 
-
-
-      console.log(closeButton)
-
-      deviceLabel.addEventListener('click', openModal)
-      remoteButtons.addEventListener('click', onClick);
+      deviceLabel.addEventListener('click', openModal);
       sendTextInput.addEventListener('keydown', onSendTextKeyDown);
       sendTextButton.addEventListener('click', onSendTextButtonClick);
       setIpAddressButton.addEventListener('click', onSetIpAdrressButtonClick);
